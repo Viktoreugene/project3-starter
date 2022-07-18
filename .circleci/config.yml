@@ -221,18 +221,26 @@ jobs:
       # Checkout code from git
       - checkout
       # Add ssh keys with fingerprint
-      
+      - add_ssh_keys:
+          fingerprints: [14:a3:98:7a:9a:f6:e8:42:1a:1f:41:0b:4d:3f:84:2f]      
       # attach workspace
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
             # Your code here
-            exit 1
+            yum install -y tar gzip ansible awscli
+
+            # exit 1
       - run:
           name: Configure server
           command: |
             # Your code here
-            exit 1
+            cd .circleci/ansible
+            ansible-playbook -i inventory configure-server.yml
+            
+            # exit 1
       # Here's where you will add some code to rollback on failure      
 
   run-migrations:
