@@ -6,17 +6,25 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # # Add parameter here
-      # id:
-      #   type: string   
+      # Add parameter here
+      workflowID:
+        type: string   
     steps:
       - run:
-          name: Destroy environments
+          name: Retrieve Workflow ID of stack that is about to be deleted
           when: on_fail
-          command: |
+          command: echo workflowID=${CIRCLE_WORKFLOW_ID:0:7}
+
+      - run:
+          name: Destroy Back-End Stack
+          command:         
             # Your code here
-            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
-            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflowID >>
+
+      - run: 
+          name: Destroy Front-End Stack
+          command: 
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflowID >>
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -212,11 +220,9 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure 
-      - destroy-environment
-          # id=${CIRCLE_WORFLOW_ID:0:7}
-          # id=${CIRCLE_WORFLOW_ID:0:7}
-
-
+      - destroy-environment:
+          workflowID=${CIRCLE_WORFLOW_ID:0:7}         
+      
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
@@ -245,11 +251,9 @@ jobs:
             
             # exit 1
       # Here's where you will add some code to rollback on failure 
-      - destroy-environment
-          # id=${CIRCLE_WORFLOW_ID:0:7}
-          # id=${CIRCLE_WORFLOW_ID:0:7}
-
-
+      - destroy-environment:
+          workflowID=${CIRCLE_WORFLOW_ID:0:7}
+          
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
@@ -268,8 +272,8 @@ jobs:
             # Your code here
             exit 1
      # Here's where you will add some code to rollback on failure 
-      - destroy-environment
-          # id=${CIRCLE_WORFLOW_ID:0:7}         
+      - destroy-environment:
+          workflowID=${CIRCLE_WORFLOW_ID:0:7}         
 
   deploy-frontend:
     docker:
@@ -293,8 +297,8 @@ jobs:
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure
-      - destroy-environment
-
+      - destroy-environment:
+          workflowID=${CIRCLE_WORFLOW_ID:0:7}         
                     
   deploy-backend:
     docker:
@@ -314,8 +318,8 @@ jobs:
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure 
-      - destroy-environment
-
+      - destroy-environment:
+          workflowID=${CIRCLE_WORFLOW_ID:0:7}         
 
   smoke-test:
     docker:
@@ -341,8 +345,8 @@ jobs:
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure 
-      - destroy-environment
-
+      - destroy-environment:
+          workflowID=${CIRCLE_WORFLOW_ID:0:7}         
 
   cloudfront-update:
     docker:
@@ -360,8 +364,8 @@ jobs:
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure
-      - destroy-environment
-
+      - destroy-environment:
+          workflowID=${CIRCLE_WORFLOW_ID:0:7}         
 
 # cleanup:
 #     docker:
