@@ -5,18 +5,18 @@ orbs:
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    parameters:
-      # Add parameter here
-      id:
-        type: string   
+    # parameters:
+    #   # Add parameter here
+    #   id:
+    #     type: string   
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
             # Your code here
-            aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:7}
-            # aws cloudformation delete-stack --stack-name udapeople-front-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -186,7 +186,7 @@ jobs:
               --stack-name "udapeople-backend-${CIRCLE_WORFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
             
-              exit 1
+              # exit 1
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -195,13 +195,13 @@ jobs:
               --tags project=udapeople \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              exit 1
+              # exit 1
       - run:
           name: Add back-end ip to ansible inventory
           command: |
             # Your code here
             aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAdrress' --output text >> .circleci/ansible/inventory
-            exit 1
+            # exit 1
       - persist_to_workspace:
           root: ~/
           paths:
