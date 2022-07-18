@@ -13,7 +13,7 @@ commands:
       - run:
           name: Retrieve Workflow ID of stack that is about to be deleted
           when: on_fail
-          command: echo workflowID=${CIRCLE_WORKFLOW_ID:0:7}
+          command: echo "workflowID=${CIRCLE_WORKFLOW_ID:0:7}"
 
       - run:
           name: Destroy Back-End Stack
@@ -378,7 +378,7 @@ jobs:
 #           name: Get old stack workflow id
 #           command: |
 #             # your code here
-#             export OldWorkflowID="the id here"
+#             export OldworkflowID="the id here"
 #             export STACKS=[] #put the list of stacks here
 #       - run:
 #           name: Remove old stacks and files
