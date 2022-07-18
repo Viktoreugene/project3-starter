@@ -230,7 +230,7 @@ jobs:
           name: Install dependencies
           command: |
             # Your code here
-            yum install -y tar gzip ansible awscli
+            pip install -i tar gzip ansible awscli
 
             # exit 1
       - run:
@@ -241,7 +241,9 @@ jobs:
             ansible-playbook -i inventory configure-server.yml
             
             # exit 1
-      # Here's where you will add some code to rollback on failure      
+      # Here's where you will add some code to rollback on failure 
+      - destroy-environment
+
 
   run-migrations:
     docker:
