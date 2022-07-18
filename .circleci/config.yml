@@ -187,8 +187,8 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --tags project=udapeople \
-              --stack-name "udapeople-backend-${CIRCLE_WORFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --stack-name udapeople-backend-${CIRCLE_WORFLOW_ID:0:7} \
+              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
             
               # exit 1
       - run:
@@ -198,13 +198,14 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
               # exit 1
       - run:
           name: Add back-end ip to ansible inventory
           command: |
             # Your code here
-            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAdrress' --output text >> .circleci/ansible/inventory
+            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAdrress' \
+              --output text >> .circleci/ansible/inventory.txt
             # exit 1
       - persist_to_workspace:
           root: ~/
@@ -230,7 +231,11 @@ jobs:
           name: Install dependencies
           command: |
             # Your code here
-            pip install -i tar gzip ansible awscli
+            apk update
+            apk add tar
+            pip install gzip 
+            pip install ansible 
+            pip install awscli
 
             # exit 1
       - run:
@@ -238,7 +243,7 @@ jobs:
           command: |
             # Your code here
             cd .circleci/ansible
-            ansible-playbook -i inventory configure-server.yml
+            ansible-playbook -i .circleci/ansible/inventory.txt configure-server.yml
             
             # exit 1
       # Here's where you will add some code to rollback on failure 
