@@ -164,10 +164,10 @@ jobs:
           paths: [backend/node_modules]
           key: backend-build
 
-      - slack/notify:
-          channel: C03DAJYL3SM
-          event: fail
-          template: basic_fail_1
+      # - slack/notify:
+      #     channel: C03DAJYL3SM
+      #     event: fail
+      #     template: basic_fail_1
 
   deploy-infrastructure:
     docker:
@@ -361,7 +361,7 @@ workflows:
       - test-backend:
           requires: [build-backend]
       - scan-backend:
-          context: slack-secrets
+          # context: slack-secrets
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
