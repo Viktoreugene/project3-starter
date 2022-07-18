@@ -268,8 +268,8 @@ jobs:
             # Your code here
             exit 1
      # Here's where you will add some code to rollback on failure 
-      - destroy-environment:
-          id=${CIRCLE_WORFLOW_ID:0:7}         
+      - destroy-environment
+          # id=${CIRCLE_WORFLOW_ID:0:7}         
 
   deploy-frontend:
     docker:
