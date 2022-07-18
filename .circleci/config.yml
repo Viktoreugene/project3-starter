@@ -131,6 +131,12 @@ jobs:
             - frontend-build
       # Your job code here
       - run: 
+          name: Fix Audit Failures
+          command: |
+            cd frontend
+            npm install
+            npm audit fix --audit-level=critical
+      - run: 
           name: Scan Front-End
           command: |
             cd frontend
@@ -152,6 +158,12 @@ jobs:
           keys:
             - backend-build
       # Your job code here
+      - run: 
+          name: Fix Audit Failures
+          command: |
+            cd backend
+            npm install
+            npm audit fix --audit-level=critical
       - run: 
           name: Scan Back-End
           command: |
