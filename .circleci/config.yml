@@ -17,12 +17,14 @@ commands:
 
       - run:
           name: Destroy Back-End Stack
+          when: on_fail
           command:         
             # Your code here
             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflowID >>
 
       - run: 
           name: Destroy Front-End Stack
+          when: on_fail
           command: 
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflowID >>
 
