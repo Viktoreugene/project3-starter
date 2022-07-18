@@ -137,7 +137,7 @@ jobs:
           command: |
             cd frontend
             npm install
-            npm audit --audit-level=critical --force
+            npm audit fix --audit-level=critical --force
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -159,16 +159,30 @@ jobs:
           command: |
             cd backend
             npm install
-            npm audit
+            npm audit fix --force
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
 
-      # - slack/notify:
-      #     channel: C03DAJYL3SM
-      #     event: fail
-      #     template: basic_fail_1
-
+      - slack/notify:
+          channel: C03DAJYL3SM
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "Successful audits",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: fail
+      
   deploy-infrastructure:
     docker:
       # Docker image here that supports AWS CLI
@@ -352,7 +366,7 @@ jobs:
             
 
 workflows:
-  default:
+  default_and notify:
     jobs:
       - build-frontend
       - build-backend
@@ -361,7 +375,7 @@ workflows:
       - test-backend:
           requires: [build-backend]
       - scan-backend:
-          # context: slack-secrets
+          context: slack-secrets
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
