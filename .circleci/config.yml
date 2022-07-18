@@ -231,10 +231,7 @@ jobs:
           name: Install dependencies
           command: |
             # Your code here
-            pip install gzip 
-            pip install ansible 
-            pip install awscli
-
+            apk add --update --no-cache tar gzip ansible aws-cli
             # exit 1
       - run:
           name: Configure server
