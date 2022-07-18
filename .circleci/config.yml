@@ -164,25 +164,11 @@ jobs:
           paths: [backend/node_modules]
           key: backend-build
 
-      - slack/notify:
-          channel: C03DAJYL3SM
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "Successful audits",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-          event: fail
-      
+      # - slack/notify:
+      #     channel: C03DAJYL3SM
+      #     event: fail
+      #     template: basic_fail_1
+
   deploy-infrastructure:
     docker:
       # Docker image here that supports AWS CLI
@@ -366,7 +352,7 @@ jobs:
             
 
 workflows:
-  default_and notify:
+  default:
     jobs:
       - build-frontend
       - build-backend
@@ -375,7 +361,7 @@ workflows:
       - test-backend:
           requires: [build-backend]
       - scan-backend:
-          context: slack-secrets
+          # context: slack-secrets
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
