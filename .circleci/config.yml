@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  slack: circleci/slack@4.1
 
 commands:
   destroy-environment:
@@ -131,17 +133,11 @@ jobs:
             - frontend-build
       # Your job code here
       - run: 
-          name: Fix Audit Failures
-          command: |
-            cd frontend
-            npm install
-            npm audit fix --audit-level=critical --force
-      - run: 
           name: Scan Front-End
           command: |
             cd frontend
             npm install
-            npm audit --audit-level=critical
+            npm audit --audit-level=critical --force
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -163,10 +159,15 @@ jobs:
           command: |
             cd backend
             npm install
-            npm audit fix --force
+            npm audit
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+
+      - slack/notify:
+          channel: C03DAJYL3SM
+          event: fail
+          template: basic_fail_1
 
   deploy-infrastructure:
     docker:
@@ -360,6 +361,7 @@ workflows:
       - test-backend:
           requires: [build-backend]
       - scan-backend:
+          context: slack-secrets
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
