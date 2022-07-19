@@ -47,6 +47,7 @@ commands:
             #  cd ~/project/backend
             #  npm install
             #  Add revert code here. You can find this in the Getting Started section.
+
               exit 1
             fi
             
@@ -290,8 +291,13 @@ jobs:
             npm install
             npm run migrations > migrations_dump.txt
             cat ./migrations_dump.txt
-            npm audit fix --force
             # exit 1
+      - run: 
+          name: Audit migrations
+          command: |
+            cd backend
+            npm install
+            npm audit fix --audit-level=critical --force
       - run:
           name: Send migration results to memstash
           command: |
