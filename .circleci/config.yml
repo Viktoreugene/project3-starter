@@ -211,16 +211,27 @@ jobs:
               --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
               # exit 1
       - run:
-          name: Add back-end ip to ansible inventory
+          name: Read back-end ip and store in kvdb.io
           command: |
             # Your code here
-            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAdrress' \
-              --output text >> .circleci/ansible/inventory.txt
+            pwd
+            public_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAdrress' \
+              --output text)
+            echo "public_IP=${BACKEND_IP}"
+            curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/public_IP -d '${BACKEND_IP}'
             # exit 1
+
+      - run: 
+          name: add public IP to inventory.txt
+          command: |
+            pwd
+            public_IP=$(curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/public_IP)
+            echo ${public_IP} >> ./.circleci/ansible/inventory.txt
+            cat ./.circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventory.txt
+            - ./.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure 
       - destroy-environment:
           workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
@@ -250,7 +261,7 @@ jobs:
             # Your code here
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
-            
+            echo "BACKEND_IP=${BACKEND_IP}"
             # exit 1
       # Here's where you will add some code to rollback on failure 
       - destroy-environment:
