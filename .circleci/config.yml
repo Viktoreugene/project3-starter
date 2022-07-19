@@ -216,8 +216,8 @@ jobs:
             # Your code her
             public_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAdrress' \
               --output text)
-            echo "public_IP=${public_IP}"
-            curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/public_IP -d '${public_IP}'
+            # echo "public_IP=${public_IP}"
+            curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/public_IP -d 'supersecret:${public_IP}'
             # exit 1
 
       - run: 
@@ -230,7 +230,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - Project/.circleci/ansible/inventory.txt
+            - ~/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure 
       - destroy-environment:
           workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
