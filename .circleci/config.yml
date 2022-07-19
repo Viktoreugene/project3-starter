@@ -260,7 +260,7 @@ jobs:
             # Your code here
             cd .circleci/ansible
             pwd
-            cat /inventory.txt
+            cat ./inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
             # exit 1
       # Here's where you will add some code to rollback on failure 
@@ -293,8 +293,16 @@ jobs:
           name: Send migration results to memstash
           command: |
             # Your code here
+            if grep "has been executed successfully" ./backend/migrations_dump.txt
+            then
+              echo "DB migration has been successful"
+              curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\} -d '1'
+            else
+              echo "DB migration has failed, Verify DB setup"
+              curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\} -d '0'
+            fi 
 
-            exit 1
+            # exit 1
      # Here's where you will add some code to rollback on failure 
       - destroy-environment:
           workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
