@@ -287,17 +287,16 @@ jobs:
             # Your code here
             cd backend
             pwd
-            npm i aws-cli
             npm install
             npm run migrations > migrations_dump.txt
             cat ./migrations_dump.txt
             # exit 1
-      - run: 
-          name: Audit migrations
-          command: |
-            cd backend
-            npm install
-            npm audit fix --audit-level=critical --force
+      # - run: 
+      #     name: Audit migrations
+      #     command: |
+      #       cd backend
+      #       npm install
+      #       npm audit fix --audit-level=critical --force
       - run:
           name: Send migration results to memstash
           command: |
