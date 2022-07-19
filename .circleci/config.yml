@@ -224,7 +224,7 @@ jobs:
           name: add public IP to inventory.txt
           command: |
             pwd
-            =$(curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/public_IP)
+            public_IP=$(curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/public_IP)
             echo ${public_IP} >> ./.circleci/ansible/inventory.txt
             cat ./.circleci/ansible/inventory.txt
       - persist_to_workspace:
