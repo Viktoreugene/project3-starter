@@ -279,17 +279,14 @@ jobs:
           keys:
             - backend-build
       - attach_workspace:
-          at: .
-      - run:
-          name: Install dependencies
-          command: |
-            npm i aws-cli      
+          at: .  
       - run:
           name: Run migrations
           command: |
             # Your code here
             cd backend
             pwd
+            npm i aws-cli
             npm install
             npm run migrations > migrations_dump.txt
             cat ./migrations_dump.txt
