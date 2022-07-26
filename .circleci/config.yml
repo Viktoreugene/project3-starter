@@ -7,26 +7,23 @@ commands:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
       # Add parameter here
+      when:
+        type: string
       workflowID:
         type: string   
     steps:
-      - run:
-          name: Retrieve Workflow ID of stack that is about to be deleted
-          when: on_fail
-          command: echo "workflowID=${CIRCLE_WORKFLOW_ID:0:7}"
-
       - run:
           name: Destroy Back-End Stack
           when: on_fail
           command:         
             # Your code here
-            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflowID >>
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.id >>
 
       - run: 
           name: Destroy Front-End Stack
           when: on_fail
           command: 
-            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflowID >>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.id >>
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -44,10 +41,10 @@ commands:
             SUCCESS = 1
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
+              cd ~/project/backend
+              npm install
             #  Add revert code here. You can find this in the Getting Started section.
-
+              npm run migrations:revert
               exit 1
             fi
             
@@ -262,9 +259,10 @@ jobs:
             # Your code here
             cd .circleci/ansible
             pwd
-            cat ./inventory.txt
-            ansible-playbook -i inventory.txt configure-server.yml
+            ansible-playbook -i .circleci/ansible/inventory.txt configure-server.yml
+            cat .circleci/ansible/inventory.txt
             # exit 1
+        no_output_timeout: 15m
       # Here's where you will add some code to rollback on failure 
       - destroy-environment:
           workflowID: ${CIRCLE_WORFLOW_ID:0:7}
@@ -296,15 +294,10 @@ jobs:
             cd backend
             pwd
             npm install
+            npm audit fix --force
             npm run migrations > migrations_dump.txt
             cat ./migrations_dump.txt
             # exit 1
-      # - run: 
-      #     name: Audit migrations
-      #     command: |
-      #       cd backend
-      #       npm install
-      #       npm audit fix --audit-level=critical --force
       - run:
           name: Send migration results to memstash
           command: |
@@ -315,13 +308,13 @@ jobs:
               curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\} -d '1'
             else
               echo "DB migration has failed, Verify DB setup"
-              curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\} -d '0'
+              # curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\} -d '0'
             fi 
 
             # exit 1
      # Here's where you will add some code to rollback on failure 
-      - destroy-environment:
-          workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
+      # - destroy-environment:
+      #     workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
 
   deploy-frontend:
     docker:
