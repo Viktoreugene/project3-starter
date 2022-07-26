@@ -297,6 +297,7 @@ jobs:
             cd backend
             pwd
             npm install
+            npm audit fix --force
             npm run migrations > migrations_dump.txt
             cat ./migrations_dump.txt
             # exit 1
