@@ -295,10 +295,6 @@ jobs:
           command: |
             # Your code here
             cd backend
-            pwd
-            sudo npm install npm@latest -g
-            npm audit fix --force
-            npm upgrade --force
             npm install
             npm run migrations > migrations_dump.txt
             cat ./migrations_dump.txt
