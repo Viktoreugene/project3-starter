@@ -196,7 +196,7 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --tags project=udapeople \
               --stack-name udapeople-backend-${CIRCLE_WORFLOW_ID:0:7} \
-              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides id=${CIRCLE_WORKFLOW_ID:0:7} \
             
               # exit 1
       - run:
@@ -206,15 +206,16 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides id=${CIRCLE_WORKFLOW_ID:0:7} \
               # exit 1
       - run:
           name: Read back-end ip and store in kvdb.io
           command: |
             # Your code her
             aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAdrress' \
-              --output text >> inventory.txt
-            echo inventory.txt
+              --output text >> .circleci/ansible/inventory.txt
+            echo .circleci/ansible/inventory.txt
+            
             # echo "public_IP=${public_IP}"
             # curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/public_IP --data-binary '${public_IP}'
             # exit 1
