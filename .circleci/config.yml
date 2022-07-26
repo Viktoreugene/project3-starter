@@ -9,7 +9,7 @@ commands:
       # Add parameter here
       when:
         type: string
-      WorkflowID:
+      id:
         type: string   
     steps:
       - run:
@@ -17,19 +17,19 @@ commands:
           when: on_fail
           command:         
             # Your code here
-            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.WorkflowID >>
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.id >>
 
       - run: 
           name: Destroy Front-End Stack
           when: on_fail
           command: 
-            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.WorkflowID >>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.id >>
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
       # Add parameter here  
-      WorkflowID:
+      id:
         type: string   
     steps:
       - run:
@@ -234,7 +234,7 @@ jobs:
       # Here's where you will add some code to rollback on failure 
       - destroy-environment:
           when: on_fail
-          WorkflowID: ${CIRCLE_WORFLOW_ID:0:7}         
+          id: ${CIRCLE_WORFLOW_ID:0:7}         
       
   configure-infrastructure:
     docker:
