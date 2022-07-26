@@ -261,13 +261,14 @@ jobs:
             # Your code here
             cd .circleci/ansible
             pwd
-            ansible-playbook -i .circleci/ansible/inventory.txt configure-server.yml
+            ansible-playbook -i inventory.txt configure-server.yml
             cat .circleci/ansible/inventory.txt
             # exit 1
           no_output_timeout: 15m
       # Here's where you will add some code to rollback on failure 
-      # - destroy-environment:
-      #     workflowID: ${CIRCLE_WORFLOW_ID:0:7}
+      - destroy-environment:
+          when: on_fail
+          id: ${CIRCLE_WORFLOW_ID:0:7}
           
   run-migrations:
     docker:
@@ -315,8 +316,9 @@ jobs:
 
             # exit 1
      # Here's where you will add some code to rollback on failure 
-      # - destroy-environment:
-      #     workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
+      - destroy-environment:
+          when: on_fail
+          id: ${CIRCLE_WORFLOW_ID:0:7}         
 
   deploy-frontend:
     docker:
@@ -340,8 +342,9 @@ jobs:
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure
-      # - destroy-environment:
-      #     workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
+      - destroy-environment:
+          when: on_fail
+          id: ${CIRCLE_WORFLOW_ID:0:7}         
                     
   deploy-backend:
     docker:
