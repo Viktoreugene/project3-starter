@@ -259,10 +259,10 @@ jobs:
           name: Configure server
           command: |
             # Your code here
-            cd .circleci/ansible
-            pwd
-            ansible-playbook -i inventory.txt configure-server.yml
-            cat inventory.txt
+            # cd .circleci/ansible
+            
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+            cat .circleci/ansible/inventory.txt
             # exit 1
           no_output_timeout: 15m
       # Here's where you will add some code to rollback on failure 
@@ -296,7 +296,7 @@ jobs:
             # Your code here
             cd backend
             pwd
-            npm install npm@latest -g
+            sudo npm install npm@latest -g
             npm audit fix --force
             npm upgrade --force
             npm install
