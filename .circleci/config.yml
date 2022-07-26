@@ -232,6 +232,7 @@ jobs:
             - project/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure 
       - destroy-environment:
+          when: on_fail
           workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
       
   configure-infrastructure:
@@ -264,8 +265,8 @@ jobs:
             # exit 1
           no_output_timeout: 15m
       # Here's where you will add some code to rollback on failure 
-      - destroy-environment:
-          workflowID: ${CIRCLE_WORFLOW_ID:0:7}
+      # - destroy-environment:
+      #     workflowID: ${CIRCLE_WORFLOW_ID:0:7}
           
   run-migrations:
     docker:
@@ -338,8 +339,8 @@ jobs:
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure
-      - destroy-environment:
-          workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
+      # - destroy-environment:
+      #     workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
                     
   deploy-backend:
     docker:
@@ -359,8 +360,8 @@ jobs:
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure 
-      - destroy-environment:
-          workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
+      # - destroy-environment:
+      #     workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
 
   smoke-test:
     docker:
@@ -386,8 +387,8 @@ jobs:
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure 
-      - destroy-environment:
-          workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
+      # - destroy-environment:
+      #     workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
 
   cloudfront-update:
     docker:
@@ -405,8 +406,8 @@ jobs:
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure
-      - destroy-environment:
-          workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
+      # - destroy-environment:
+      #     workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
 
 # cleanup:
 #     docker:
