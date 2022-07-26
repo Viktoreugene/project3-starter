@@ -9,7 +9,7 @@ commands:
       # Add parameter here
       when:
         type: string
-      id:
+      WorkflowID:
         type: string   
     steps:
       - run:
@@ -17,19 +17,19 @@ commands:
           when: on_fail
           command:         
             # Your code here
-            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.id >>
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.WorkflowID >>
 
       - run: 
           name: Destroy Front-End Stack
           when: on_fail
           command: 
-            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.id >>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.WorkflowID >>
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
       # Add parameter here  
-      id:
+      WorkflowID:
         type: string   
     steps:
       - run:
@@ -196,7 +196,7 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --tags project=udapeople \
               --stack-name udapeople-backend-${CIRCLE_WORFLOW_ID:0:7} \
-              --parameter-overrides id=${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides WorkflowID=${CIRCLE_WORKFLOW_ID:0:7} \
             
               # exit 1
       - run:
@@ -205,8 +205,8 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople \
-              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides id=${CIRCLE_WORKFLOW_ID:0:7} \
+              --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides WorkflowID=${CIRCLE_WORKFLOW_ID:0:7} \
               # exit 1
       - run:
           name: Read back-end ip and store in kvdb.io
@@ -215,7 +215,7 @@ jobs:
             aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAdrress' \
               --output text >> .circleci/ansible/inventory.txt
             echo .circleci/ansible/inventory.txt
-            
+
             # echo "public_IP=${public_IP}"
             # curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/public_IP --data-binary '${public_IP}'
             # exit 1
@@ -234,7 +234,7 @@ jobs:
       # Here's where you will add some code to rollback on failure 
       - destroy-environment:
           when: on_fail
-          id: ${CIRCLE_WORFLOW_ID:0:7}         
+          WorkflowID: ${CIRCLE_WORFLOW_ID:0:7}         
       
   configure-infrastructure:
     docker:
