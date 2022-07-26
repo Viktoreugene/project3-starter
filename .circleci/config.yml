@@ -262,7 +262,7 @@ jobs:
             cd .circleci/ansible
             pwd
             ansible-playbook -i inventory.txt configure-server.yml
-            cat .circleci/ansible/inventory.txt
+            cat inventory.txt
             # exit 1
           no_output_timeout: 15m
       # Here's where you will add some code to rollback on failure 
