@@ -296,9 +296,10 @@ jobs:
             # Your code here
             cd backend
             pwd
+            npm install npm@latest -g
+            npm audit fix --force
+            npm upgrade --force
             npm install
-            npm run build
-            npm audit fix --audit-level=critical --force
             npm run migrations > migrations_dump.txt
             cat ./migrations_dump.txt
             # exit 1
