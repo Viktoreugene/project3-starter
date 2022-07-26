@@ -262,7 +262,7 @@ jobs:
             ansible-playbook -i .circleci/ansible/inventory.txt configure-server.yml
             cat .circleci/ansible/inventory.txt
             # exit 1
-        no_output_timeout: 15m
+          no_output_timeout: 15m
       # Here's where you will add some code to rollback on failure 
       - destroy-environment:
           workflowID: ${CIRCLE_WORFLOW_ID:0:7}
