@@ -9,7 +9,7 @@ commands:
       # Add parameter here
       when:
         type: string
-      workflowID:
+      id:
         type: string   
     steps:
       - run:
