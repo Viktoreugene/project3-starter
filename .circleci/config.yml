@@ -305,16 +305,17 @@ jobs:
           name: Send migration results to memstash
           command: |
             # Your code here
-            if grep "has been executed successfully" ./backend/migrations_dump.txt
+            if grep -q "has been executed successfully" ./backend/migrations_dump.txt
             then
               echo "DB migration has been successful"
               curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\} -d '1'
-            else
-              echo "DB migration has failed, Verify DB setup"
-              # curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\} -d '0'
+            # else
+            #   echo "DB migration has failed, Verify DB setup"
+            #   # curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\} -d '0'
             fi 
 
             # exit 1
+          
      # Here's where you will add some code to rollback on failure 
       - destroy-environment:
           when: on_fail
@@ -327,16 +328,27 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
+      - restore_cache:
+          keys:
+            - frontend-build
+      - attach_workspace:
+          at: .  
       - run:
           name: Install dependencies
           command: |
             # your code here
+            yum install -y tar gzip curl
+            curl -sL https://rpm.nodesource.com/setup_10.x | bash -
+            yum install -y nodejs
       - run:
           name: Get backend url
           command: |
             # your code here
-            export API_URL="http://${public_IP}:3030"
-            echo "${API_URL}"
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            echo API_URL = "http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
       - run:
           name: Deploy frontend objects
           command: |
