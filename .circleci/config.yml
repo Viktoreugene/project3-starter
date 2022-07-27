@@ -407,7 +407,8 @@ jobs:
             # pip install npm
             # npm run build
             # cd ..
-            tar -C backend -czvf artifact.tar.gz
+            tar  czf artifact.tar.gz backend/
+            export ANSIBLE_HOST_KEY_CHECKING=false
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
