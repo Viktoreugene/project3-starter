@@ -318,8 +318,8 @@ jobs:
             # exit 1
           
      # Here's where you will add some code to rollback on failure
-      - revert-migrations:
-          id: ${CIRCLE_WORFLOW_ID:0:7}  
+      # - revert-migrations:
+      #     id: ${CIRCLE_WORFLOW_ID:0:7}  
       - destroy-environment:
           when: on_fail
           id: ${CIRCLE_WORFLOW_ID:0:7}             
@@ -367,8 +367,8 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-build
       # Here's where you will add some code to rollback on failure
-      - revert-migrations:
-          id: ${CIRCLE_WORFLOW_ID:0:7}    
+      # - revert-migrations:
+      #     id: ${CIRCLE_WORFLOW_ID:0:7}    
       - destroy-environment:
           when: on_fail
           id: ${CIRCLE_WORFLOW_ID:0:7} 
