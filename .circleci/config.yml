@@ -402,7 +402,7 @@ jobs:
           command: |
             # your code here
             cd backend
-            npm install
+            pip install npm
             npm run build
             tar -C backend -czvf artifact.tar.gz
             cd .circleci/ansible
