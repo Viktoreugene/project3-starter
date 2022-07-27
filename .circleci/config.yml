@@ -38,14 +38,14 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
-            if(( $SUCCESS==1 )); 
+            SUCCESS = ${curl --insecure https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\}}
+            if(( $SUCCESS == 1 )); 
             then
               cd ~/project/backend
               npm install
             #  Add revert code here. You can find this in the Getting Started section.
               npm run migrations:revert
-              exit 1
+              # exit 1
             fi
             
 jobs:
@@ -359,6 +359,10 @@ jobs:
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-build
       # Here's where you will add some code to rollback on failure
       - destroy-environment:
           when: on_fail
@@ -371,16 +375,33 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
+      - add_ssh_keys:
+          fingerprints: [9f:a2:83:62:ee:48:11:0f:80:1e:0e:ec:e4:f8:79:4a]
       # Add ssh keys with fingerprint
+      - attach_workspace:
+          at: . 
       # attach workspace
       - run:
           name: Install dependencies
           command: |
             # your code here
+            apk add --update --no-cache tar gzip ansible aws-cli
       - run:
           name: Deploy backend
           command: |
             # your code here
+            cd backend
+            npm i
+            npm run build
+            tar -C backend -czvf artifact.tar.gz
+            cd .circleci/ansible
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: backend-build
       # Here's where you will add some code to rollback on failure 
       # - destroy-environment:
       #     workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
