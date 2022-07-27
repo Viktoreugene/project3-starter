@@ -319,7 +319,9 @@ jobs:
      # Here's where you will add some code to rollback on failure 
       - destroy-environment:
           when: on_fail
-          id: ${CIRCLE_WORFLOW_ID:0:7}         
+          id: ${CIRCLE_WORFLOW_ID:0:7}  
+      - revert-migrations:
+          id: ${CIRCLE_WORFLOW_ID:0:7}        
 
   deploy-frontend:
     docker:
@@ -366,6 +368,8 @@ jobs:
       # Here's where you will add some code to rollback on failure
       - destroy-environment:
           when: on_fail
+          id: ${CIRCLE_WORFLOW_ID:0:7} 
+      - revert-migrations:
           id: ${CIRCLE_WORFLOW_ID:0:7}         
                     
   deploy-backend:
@@ -398,7 +402,7 @@ jobs:
           command: |
             # your code here
             cd backend
-            npm i
+            npm install
             npm run build
             tar -C backend -czvf artifact.tar.gz
             cd .circleci/ansible
@@ -410,8 +414,11 @@ jobs:
           paths: [frontend/node_modules]
           key: backend-build
       # Here's where you will add some code to rollback on failure 
-      # - destroy-environment:
-      #     workflowID: ${CIRCLE_WORFLOW_ID:0:7}         
+      - destroy-environment:
+          when: on_fail
+          id: ${CIRCLE_WORFLOW_ID:0:7} 
+      - revert-migrations:
+          id: ${CIRCLE_WORFLOW_ID:0:7}        
 
   smoke-test:
     docker:
