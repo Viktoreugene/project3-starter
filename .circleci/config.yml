@@ -38,10 +38,10 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = ${curl --insecure https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\}}
+            SUCCESS = ${curl --insecure https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_<< parameter.id >>}
             if(( $SUCCESS == 1 )); 
             then
-              cd ~/project/backend
+              cd ./backend
               npm install
             #  Add revert code here. You can find this in the Getting Started section.
               npm run migrations:revert
@@ -313,15 +313,15 @@ jobs:
             #   echo "DB migration has failed, Verify DB setup"
             #   # curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\} -d '0'
             fi 
-            echo curl --insecure https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\}
+            echo ${curl --insecure https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\}}
             # exit 1
           
-     # Here's where you will add some code to rollback on failure 
+     # Here's where you will add some code to rollback on failure
+     - revert-migrations:
+          id: ${CIRCLE_WORFLOW_ID:0:7}  
       - destroy-environment:
           when: on_fail
-          id: ${CIRCLE_WORFLOW_ID:0:7}  
-      - revert-migrations:
-          id: ${CIRCLE_WORFLOW_ID:0:7}        
+          id: ${CIRCLE_WORFLOW_ID:0:7}             
 
   deploy-frontend:
     docker:
@@ -366,11 +366,12 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-build
       # Here's where you will add some code to rollback on failure
+      - revert-migrations:
+          id: ${CIRCLE_WORFLOW_ID:0:7}    
       - destroy-environment:
           when: on_fail
           id: ${CIRCLE_WORFLOW_ID:0:7} 
-      - revert-migrations:
-          id: ${CIRCLE_WORFLOW_ID:0:7}         
+           
                     
   deploy-backend:
     docker:
@@ -401,9 +402,10 @@ jobs:
           name: Deploy backend
           command: |
             # your code here
-            cd backend
-            pip install npm
-            npm run build
+            # cd backend
+            # pip install npm
+            # npm run build
+            # cd ..
             tar -C backend -czvf artifact.tar.gz
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
@@ -414,12 +416,12 @@ jobs:
           paths: [frontend/node_modules]
           key: backend-build
       # Here's where you will add some code to rollback on failure 
+      - revert-migrations:
+          id: ${CIRCLE_WORFLOW_ID:0:7}        
       - destroy-environment:
           when: on_fail
           id: ${CIRCLE_WORFLOW_ID:0:7} 
-      - revert-migrations:
-          id: ${CIRCLE_WORFLOW_ID:0:7}        
-
+      
   smoke-test:
     docker:
       # Lightweight Docker image 
