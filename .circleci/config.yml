@@ -402,12 +402,12 @@ jobs:
             apk add --no-cache openssh-client
             apk add --no-cache --upgrade bash
             pip install awscli
-      - run:
-          name: Deploy backend
-          command: |
+      # - run:
+      #     name: Deploy backend
+      #     command: |
             # your code here
             cd backend
-            npm i
+            npm install
             npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz
