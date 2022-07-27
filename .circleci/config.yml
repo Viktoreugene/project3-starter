@@ -313,7 +313,7 @@ jobs:
             #   echo "DB migration has failed, Verify DB setup"
             #   # curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\} -d '0'
             fi 
-
+            echo curl --insecure https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\}
             # exit 1
           
      # Here's where you will add some code to rollback on failure 
@@ -371,13 +371,15 @@ jobs:
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
-      - image: circleci/python:3.9.1
+      - image: python:3.7-alpine3.11
     steps:
       # Checkout code from git
       - checkout
       - add_ssh_keys:
           fingerprints: [9f:a2:83:62:ee:48:11:0f:80:1e:0e:ec:e4:f8:79:4a]
       # Add ssh keys with fingerprint
+      - restore_cache:
+          keys: [backend_build]
       - attach_workspace:
           at: . 
       # attach workspace
@@ -385,7 +387,12 @@ jobs:
           name: Install dependencies
           command: |
             # your code here
-            apk add --update --no-cache tar gzip ansible aws-cli
+            # apk add --update --no-cache tar gzip ansible aws-cli
+            apk add --update ansible
+            apk add --no-cache curl
+            apk add --no-cache openssh-client
+            apk add --no-cache --upgrade bash
+            pip install awscli
       - run:
           name: Deploy backend
           command: |
