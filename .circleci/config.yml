@@ -392,7 +392,7 @@ jobs:
           name: Install dependencies
           command: |
             # your code here
-            # apk add --update --no-cache tar gzip ansible aws-cli
+            apk add --update --no-cache tar gzip ansible aws-cli
             apk add --update ansible
             apk add --no-cache curl
             apk add --no-cache openssh-client
@@ -402,11 +402,13 @@ jobs:
           name: Deploy backend
           command: |
             # your code here
-            # cd backend
-            # pip install npm
-            # npm run build
-            # cd ..
-            tar  czf artifact.tar.gz backend/
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            tar -C backend -czvf artifact.tar.gz
+            mkdir -p ~project/.circleci/ansible/roles/deploy/files/
+            mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             export ANSIBLE_HOST_KEY_CHECKING=false
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
