@@ -401,11 +401,11 @@ jobs:
             ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
             apk add --no-cache openssh-client
             apk add --no-cache --upgrade bash
-            pip install awscli
-      # - run:
-      #     name: Deploy backend
-      #     command: |
-            # your code here
+            # pip install awscli
+            # - run:
+            #     name: Deploy backend
+            #     command: |
+                  # your code here
             cd backend
             npm install
             npm run build
