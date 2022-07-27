@@ -317,7 +317,7 @@ jobs:
             # exit 1
           
      # Here's where you will add some code to rollback on failure
-     - revert-migrations:
+      - revert-migrations:
           id: ${CIRCLE_WORFLOW_ID:0:7}  
       - destroy-environment:
           when: on_fail
