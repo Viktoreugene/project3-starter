@@ -29,8 +29,8 @@ commands:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
       # Add parameter here  
-      id:
-        type: string   
+      # id:
+      #   type: string   
     steps:
       - run:
           name: Revert migrations
@@ -38,7 +38,7 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = ${curl --insecure https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_<< parameters.id >>}
+            SUCCESS = $(curl --insecure https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_<< parameters.id >>)
             echo $SUCCESS
             if(( $SUCCESS == 1 )); 
             then
@@ -314,7 +314,7 @@ jobs:
             #   echo "DB migration has failed, Verify DB setup"
             #   # curl https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\} -d '0'
             fi 
-            echo ${curl --insecure https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\}}
+            echo $(curl --insecure https://kvdb.io/7DNnXarzb2DE8b7NZKmwmv/migrations_$\{CIRCLE_WORKFLOW_ID:0:7\})
             # exit 1
           
      # Here's where you will add some code to rollback on failure
