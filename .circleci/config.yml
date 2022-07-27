@@ -376,7 +376,7 @@ jobs:
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
-      - image: python:3.7-alpine3.11
+      - image: python:3.7-alpine3.16
     steps:
       # Checkout code from git
       - checkout
@@ -392,9 +392,13 @@ jobs:
           name: Install dependencies
           command: |
             # your code here
-            apk add --update --no-cache tar gzip ansible aws-cli
+            apk add --update --no-cache tar gzip ansible
             apk add --update ansible
-            apk add --no-cache curl
+            apk add --update nodejs
+            apk add curl
+            curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+            unzip awscli-bundle.zip
+            ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
             apk add --no-cache openssh-client
             apk add --no-cache --upgrade bash
             pip install awscli
